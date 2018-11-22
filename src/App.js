@@ -20,39 +20,46 @@ class Survey extends Component {
     this.seeSurvey = this.seeSurvey.bind(this);
     this.getAnswers = this.getAnswers.bind(this);
     this.counter = 1;
+    this.answerNumber = '';
     this.state = {
       value: [],
       questionsPrinted: [],
       questionComponents : [],
+      answers: [],
       answersPrinted: []
     }
   }
   seeSurvey(event){
    event.preventDefault();
-   let newArray = [];
+   let newAnswer = [] ,newQuestion = [];
    for(let i =1; i<=this.counter; i++){
       const printQuestionComponent = () => {
-        return <div><p>Question: {this.state.value['question'+i]}</p></div>
+        return <div><p>Question{i}: {this.state.value['question'+i]}</p></div>
       }
-      newArray.push(printQuestionComponent);
+      newQuestion.push(printQuestionComponent);
    }
-    this.setState({ questionsPrinted: newArray });
+   /*for(let i=1; i<=Object.keys(this.state.answers).length; i++){
+    const printAnswerComponent = () => {
+      return <div><p>Answer{i}: {this.state.answers['answer'+i]}</p></div>
+    }
+    newAnswer.push(printAnswerComponent);
+   }*/
+    this.setState({ questionsPrinted: newQuestion });
+    //this.setState({ answersPrinted: newAnswer });
   }
   handleChange (event) {
     const valueArray = this.state.value;
     valueArray[event.target.name]=event.target.value;
     this.setState({ value: valueArray });
+    console.log(valueArray);
     console.log(event.target.value);
   }
-  getAnswers(val){
-    let newArray = [];
-    for(let i =1; i<=this.counter; i++){
-       const printAnswerComponent = () => {
-         return <div><p>Answer(s): {val['answer'+i]}</p></div>
-       }
-       newArray.push(printAnswerComponent);
-    }
-     this.setState({ answersPrinted: newArray });
+  getAnswers(answer, ansNum){
+    this.answerNumber= ansNum;
+    const valueArray = this.state.value;
+    valueArray[this.answerNumber]=answer;
+    this.setState({ value: valueArray });
+    console.log(valueArray);
   }
   addQuestion(){
     const currentCounter = this.counter+1;
@@ -183,7 +190,7 @@ class Answers extends Component {
     const answerArray = this.state.answerArray;
     answerArray[event.target.name]=event.target.value;
     this.setState({ answerArray: answerArray });
-    this.props.answers(answerArray);
+    this.props.answers(answerArray, event.target.name);
     console.log(event.target.value);
   }
   render(){
