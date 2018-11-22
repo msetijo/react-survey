@@ -2,17 +2,21 @@ import React, { Component } from 'react';
 
 import './App.css';
 
+const PrintQuestion = (props) => {
+  return (
+      <p>{props.question}</p>
+  );
+};
+
 class Question extends Component {
   constructor(props){
     super(props);
   }
   render(){
     return(
-      <div>
-        <input type="text" placeholder="Question" value={this.props.value} onChange={this.props.onChange} onSubmit={this.props.seeSurvey}/>
-      </div>
+        <input type="text" placeholder="Question" name={this.props.name} onChange={this.props.onChange} />
+        
     );
-    
   }
 }
 
@@ -22,38 +26,50 @@ class Questions extends Component {
     this.addQuestion = this.addQuestion.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.seeSurvey = this.seeSurvey.bind(this);
-    this.counter = 0;
+    this.counter = 1;
     this.state = {
       value: [],
       questionComponents : []
     }
   }
-  seeSurvey(){
-    console.log('A name was submitted: ' + this.state.value);
+  seeSurvey(event){
+   event.preventDefault();
+   for(let i =1; i<=this.counter; i++){
+     console.log(this.state.value['question'+i]);
+   }
   }
-  handleChange(event){
-    this.setState({value: event.target.value});
+  handleChange (event) {
+    const valueArray = this.state.value;
+    valueArray[event.target.name]=event.target.value;
+    this.setState({ value: valueArray });
+    console.log(event.target.value);
   }
   addQuestion(){
+    const currentCounter = this.counter+1;
+    this.counter = this.counter+1;
     const questionComponent = () => {
+      
       return <div>
-                <Question value={this.state.value[counter]} onChange={this.handleChange} onSubmit={this.seeSurvey} />
+                <Question name={'question'+currentCounter} onChange={this.handleChange} />
              </div>
-      }
+    }
     const newArray = this.state.questionComponents.concat(questionComponent);
     this.setState({ questionComponents: newArray });
   }
   render(){
-    if(this.state.questionComponents === []){
+    if(this.state.questionComponents.length === 0){
+      const currentCounter = this.counter;
       const questionComponent = () => {
         return <div>
-                  <Question value={this.state.value} onChange={this.handleChange} onSubmit={this.seeSurvey} />
+                  <Question name={'question'+currentCounter} onChange={this.handleChange} />
                </div>
-        }
-      const newArray = this.state.questionComponents.concat(questionComponent);
-      this.setState({ questionComponents: newArray });
+      }
+      this.state.questionComponents.push(questionComponent);
     }
     const questions = this.state.questionComponents.map((Element, index) => {
+      return <Element key={ index } index={ index } />
+    });
+    const questionsPrinted = this.state.value.map((Element, index) => {
       return <Element key={ index } index={ index } />
     });
       return(
@@ -65,6 +81,9 @@ class Questions extends Component {
           <p><a id="addQuestion" onClick={this.addQuestion} href="#">Add Question</a></p>
           <input id="saveSurvey" type="submit" value="Survey Preview" />
          </form>
+         <div className="printedSurvey">
+            {questionsPrinted}
+          </div>
         </div>
       );
   }
