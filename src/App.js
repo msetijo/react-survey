@@ -3,30 +3,28 @@ import React, { Component } from 'react';
 import './App.css';
 
 class Question extends Component {
-  constructor(props){
-    super(props);
-  }
   render(){
     return(
         <div>
         <input type="text" placeholder="Question" name={this.props.name} onChange={this.props.onChange} />
-        <Answers />
         </div>
     );
   }
 }
 
-class Questions extends Component {
+class Survey extends Component {
   constructor(props){
     super(props);
     this.addQuestion = this.addQuestion.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.seeSurvey = this.seeSurvey.bind(this);
+    this.getAnswers = this.getAnswers.bind(this);
     this.counter = 1;
     this.state = {
       value: [],
       questionsPrinted: [],
-      questionComponents : []
+      questionComponents : [],
+      answersPrinted: []
     }
   }
   seeSurvey(event){
@@ -34,7 +32,7 @@ class Questions extends Component {
    let newArray = [];
    for(let i =1; i<=this.counter; i++){
       const printQuestionComponent = () => {
-        return <p>{this.state.value['question'+i]}</p>
+        return <div><p>Question: {this.state.value['question'+i]}</p></div>
       }
       newArray.push(printQuestionComponent);
    }
@@ -46,12 +44,23 @@ class Questions extends Component {
     this.setState({ value: valueArray });
     console.log(event.target.value);
   }
+  getAnswers(val){
+    let newArray = [];
+    for(let i =1; i<=this.counter; i++){
+       const printAnswerComponent = () => {
+         return <div><p>Answer(s): {val['answer'+i]}</p></div>
+       }
+       newArray.push(printAnswerComponent);
+    }
+     this.setState({ answersPrinted: newArray });
+  }
   addQuestion(){
     const currentCounter = this.counter+1;
     this.counter = this.counter+1;
     const questionComponent = () => {
       return <div>
                 <Question name={'question'+currentCounter} onChange={this.handleChange} />
+                <Answers answers={this.getAnswers} />
              </div>
     }
     const newArray = this.state.questionComponents.concat(questionComponent);
@@ -63,6 +72,7 @@ class Questions extends Component {
       const questionComponent = () => {
         return <div>
                   <Question name={'question'+currentCounter} onChange={this.handleChange} />
+                  <Answers answers={this.getAnswers} />
                </div>
       }
       this.state.questionComponents.push(questionComponent);
@@ -71,6 +81,9 @@ class Questions extends Component {
       return <Element key={ index } index={ index } />
     });
     const questionsPrinted = this.state.questionsPrinted.map((Element, index) => {
+      return <Element key={ index } index={ index } />
+    });
+    const answersPrinted = this.state.answersPrinted.map((Element, index) => {
       return <Element key={ index } index={ index } />
     });
       return(
@@ -84,32 +97,27 @@ class Questions extends Component {
          </form>
          <div className="printedSurvey">
             {questionsPrinted}
+            {answersPrinted}
           </div>
         </div>
       );
   }
 }
 class MultipleAnswer extends Component{
-  constructor(props){
-    super(props);
-  }
   render(){
     return(
       <div>
-        <input type="radio" /><input type="text" placeholder="Multiple Choice Answer" />
+        <input type="radio" /><input type="text" placeholder="Multiple Choice Answer" name={this.props.name} onChange={this.props.onChange} />
       </div>
     );
     
   }
 }
 class ShortAnswer extends Component{
-  constructor(props){
-    super(props);
-  }
   render(){
     return(
       <div>
-        <input type="text" placeholder="Short Answer" />
+        <input type="text" placeholder="Short Answer" name={this.props.name} onChange={this.props.onChange} />
       </div>
     );
     
@@ -120,22 +128,24 @@ class Answers extends Component {
   constructor(props){
     super(props);
     this.state = {
-      value:'multiple', 
-      answers: [MultipleAnswer],
+      selected:'multiple', 
+      answerArray: [],
+      answerArrayComponents: [],
       showAnswerButton: true
     };
+    this.counter = 1;
     this.optionChange = this.optionChange.bind(this);
-    this.answerFormat = this.answerFormat.bind(this);
+    //this.answerFormat = this.answerFormat.bind(this);
     this.addAnswer = this.addAnswer.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
   
   optionChange(event){
     const selected = event.target.value;
-    this.setState({value: selected});
-    this.answerFormat(selected);
+    this.setState({selected: selected});
+    //this.answerFormat(selected);
   }
-  
-  answerFormat(selected){
+  /*answerFormat(selected){
     if(selected === 'multiple'){
       const newAnswers = [].concat(MultipleAnswer);
       this.setState({showAnswerButton: true });
@@ -145,21 +155,48 @@ class Answers extends Component {
       this.setState({showAnswerButton: false });
       this.setState({ answers: newAnswers });
     }
-  }
+  }*/
   addAnswer(){
-    const selected = this.state.value;
+    const currentCounter = this.counter+1;
+    this.counter = this.counter+1;
+    const selected = this.state.selected;
+
     if(selected === 'multiple'){
-      const newAnswers = this.state.answers.slice();
-      newAnswers.push(MultipleAnswer);
-      this.setState({ answers: newAnswers });
+      const multipleAnswerComponent = () => {
+        return <div>
+                  <MultipleAnswer name={'answer'+currentCounter} onChange={this.handleChange} />
+               </div>
+      }
+      const newArray = this.state.answerArrayComponents.concat(multipleAnswerComponent);
+      this.setState({ answerArrayComponents: newArray });
     }else{
-      const newAnswers = this.state.answers.slice();
-      newAnswers.push(ShortAnswer);
-      this.setState({ answers: newAnswers });
+      const shortAnswerComponent = () => {
+        return <div>
+                  <ShortAnswer name={'answer'+currentCounter} onChange={this.handleChange} />
+               </div>
+      }
+      const newArray = this.state.answerArrayComponents.concat(shortAnswerComponent);
+      this.setState({ answerArrayComponents: newArray });
     }
   }
+  handleChange (event) {
+    const answerArray = this.state.answerArray;
+    answerArray[event.target.name]=event.target.value;
+    this.setState({ answerArray: answerArray });
+    this.props.answers(answerArray);
+    console.log(event.target.value);
+  }
   render(){
-    const answers = this.state.answers.map((Element, index) => {
+    if(this.state.answerArrayComponents.length === 0){
+      const currentCounter = this.counter;
+      const multipleAnswerComponent = () => {
+        return <div>
+                  <MultipleAnswer name={'answer'+currentCounter} onChange={this.handleChange} />
+               </div>
+      }
+      this.state.answerArrayComponents.push(multipleAnswerComponent);
+    }
+    const answerArrayComponents = this.state.answerArrayComponents.map((Element, index) => {
       return <Element key={ index } index={ index } />
     });
     return(
@@ -169,7 +206,7 @@ class Answers extends Component {
           <option value="short">Short Answer</option>
       </select>
       <div className="inputs">
-      { answers }
+      { answerArrayComponents }
       </div>
       { this.state.showAnswerButton ? <a className="addAnswer" onClick={this.addAnswer} href="#">Add Answer</a> : null }
      </div>
@@ -182,7 +219,7 @@ class CreateSurvey extends Component {
   render() {
     return (
       <div className="App">
-        <Questions />
+        <Survey />
         
       </div>
     );
