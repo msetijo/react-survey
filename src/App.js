@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 import './App.css';
 
-let newArray = [];
 class Question extends Component {
   constructor(props){
     super(props);
@@ -32,6 +31,7 @@ class Questions extends Component {
   }
   seeSurvey(event){
    event.preventDefault();
+   let newArray = [];
    for(let i =1; i<=this.counter; i++){
       const printQuestionComponent = () => {
         return <p>{this.state.value['question'+i]}</p>
