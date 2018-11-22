@@ -2,20 +2,17 @@ import React, { Component } from 'react';
 
 import './App.css';
 
-const PrintQuestion = (props) => {
-  return (
-      <p>{props.question}</p>
-  );
-};
-
+let newArray = [];
 class Question extends Component {
   constructor(props){
     super(props);
   }
   render(){
     return(
+        <div>
         <input type="text" placeholder="Question" name={this.props.name} onChange={this.props.onChange} />
-        
+        <Answers />
+        </div>
     );
   }
 }
@@ -29,14 +26,19 @@ class Questions extends Component {
     this.counter = 1;
     this.state = {
       value: [],
+      questionsPrinted: [],
       questionComponents : []
     }
   }
   seeSurvey(event){
    event.preventDefault();
    for(let i =1; i<=this.counter; i++){
-     console.log(this.state.value['question'+i]);
+      const printQuestionComponent = () => {
+        return <p>{this.state.value['question'+i]}</p>
+      }
+      newArray.push(printQuestionComponent);
    }
+    this.setState({ questionsPrinted: newArray });
   }
   handleChange (event) {
     const valueArray = this.state.value;
@@ -48,7 +50,6 @@ class Questions extends Component {
     const currentCounter = this.counter+1;
     this.counter = this.counter+1;
     const questionComponent = () => {
-      
       return <div>
                 <Question name={'question'+currentCounter} onChange={this.handleChange} />
              </div>
@@ -69,7 +70,7 @@ class Questions extends Component {
     const questions = this.state.questionComponents.map((Element, index) => {
       return <Element key={ index } index={ index } />
     });
-    const questionsPrinted = this.state.value.map((Element, index) => {
+    const questionsPrinted = this.state.questionsPrinted.map((Element, index) => {
       return <Element key={ index } index={ index } />
     });
       return(
@@ -170,7 +171,7 @@ class Answers extends Component {
       <div className="inputs">
       { answers }
       </div>
-      { this.state.showAnswerButton ? <a class="addAnswer" onClick={this.addAnswer} href="#">Add Answer</a> : null }
+      { this.state.showAnswerButton ? <a className="addAnswer" onClick={this.addAnswer} href="#">Add Answer</a> : null }
      </div>
     );
   }
