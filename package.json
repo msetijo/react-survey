@@ -1,5 +1,5 @@
 {
-  "homepage": "http://msetijo.github.io/react-survey/",
+  "homepage": "https://msetijo.github.io/react-survey",
   "name": "react-survey",
   "version": "0.1.0",
   "private": true,
@@ -12,9 +12,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -b master -d build",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+	"deploy" : "npm run build&&gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"

@@ -9,7 +9,7 @@ class Question extends Component {
       <div>
         <input type="text" className="questionInput" placeholder="Question" name={this.props.name} onChange={this.props.onChange} />
         <div className="underline"></div>
-      </div> 
+      </div>
     );
   }
 }
