@@ -40,16 +40,31 @@ class Survey extends Component {
     for (let i = 1; i <= this.counter; i++) {
 
       const printQuestionComponent = () => {
-        return <div><p>Question no {i}: {this.state.value['question' + i]}</p></div>
+        return <p>Question no {i}: {this.state.value['question' + i]}</p>
       }
-    
-      const printAnswerComponent = () => {
-        return <div><p>Answer: {this.state.value['answer' + i]}</p></div>
+      newArray.push(printQuestionComponent);
+      
+      let check = true;
+      const counter = 0;
+      while(check){
+        const letter = String.fromCharCode(65 + counter);
+        if(this.state.value['answer' + i + letter]){
+          var printAnswerComponent = () => {
+            //<input type="text" placeholder="Your answer" />
+
+            return <p>Answer choice: {this.state.value['answer' + i + letter]}</p>
+          }
+          counter++;
+          newArray.push(printAnswerComponent);
+          
+        }else{
+          check = false;
+        }
       }
-      if(this.state.value['question'+i] != null){
+      /*if(this.state.value['question'+i] != null){
         newArray.push(printQuestionComponent);
         newArray.push(printAnswerComponent);
-      }
+      }*/
     }
     
     this.setState({ printSurvey: newArray });
@@ -60,11 +75,10 @@ class Survey extends Component {
     valueArray[event.target.name] = event.target.value;
     this.setState({ value: valueArray });
     console.log(valueArray);
-    console.log(event.target.value);
   }
 
   getAnswers(answer, ansNum) {
-    const num = ansNum.match(/[0-9]+/g);
+    const num = ansNum.match(/[0-9]+[A-Z]/g);
     const valueArray = this.state.value;
     valueArray['answer' + num] = answer;
     this.setState({ value: valueArray });
@@ -130,8 +144,18 @@ class ShortAnswer extends Component {
   render() {
     return (
       <div>
-        <input type="text" className="answerInput" placeholder="Short Answer" name={this.props.name} onChange={this.props.onChange} />
-        <div className="underline"></div>
+        <input type="text" className="answerInput" placeholder="Short answer text" name={this.props.name} disabled />
+        <div className="underlineAnswer"></div>
+      </div>
+    );
+
+  }
+}
+class MultipleChoiceAnswer extends Component {
+  render() {
+    return (
+      <div className="multipleAnswer">
+        <div className="multipleChoiceCircle"></div><input type="text" className="multipleAnswerInput" placeholder="Option" name={this.props.name} onChange={this.props.onChange} />
       </div>
     );
 
@@ -143,6 +167,11 @@ class Answers extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
+    this.addAnswer = this.addAnswer.bind(this);
+    this.counter = 0;
+    this.state = {
+      multipleAnswerComponents : []
+    }
   }
 
   handleChange(event) {
@@ -151,14 +180,41 @@ class Answers extends Component {
     console.log(event.target.name);
 
   }
+
+  addAnswer() {
+    this.counter = this.counter + 1;
+    const currentLetter = String.fromCharCode(65 + this.counter);
+    const answerComponent = () => {
+      return <MultipleChoiceAnswer name={'answer' + this.props.counter + currentLetter} onChange={this.handleChange} />
+    }
+    const newArray = this.state.multipleAnswerComponents.concat(answerComponent);
+    this.setState({ multipleAnswerComponents: newArray });
+  }
   
   render() {
+//<ShortAnswer name={'answer' + this.props.counter} />
+    if (this.state.multipleAnswerComponents.length === 0) {
+
+      const currentLetter = String.fromCharCode(65 + this.counter);
+
+      const answerComponent = () => {
+        return <MultipleChoiceAnswer name={'answer' + this.props.counter + currentLetter} onChange={this.handleChange} />
+      }
+      
+      this.state.multipleAnswerComponents.push(answerComponent);
+
+    }
+
+    const answers = this.state.multipleAnswerComponents.map((Element, index) => {
+      return <Element key={index} index={index} />
+    });
 
     return (
       <div>
         <div className="inputs">
-          <ShortAnswer name={'answer' + this.props.counter} onChange={this.handleChange}  />
+            {answers}
         </div>
+        <a id="addAnswer" onClick={this.addAnswer} href="#"><span>+</span> Answer</a>
       </div>
     );
   }

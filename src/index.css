@@ -6,7 +6,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  
+  background: #f0f9e7;
 }
 
 code {
@@ -14,37 +14,71 @@ code {
     monospace;
 }
 input:focus{
-  outline: none;
+  outline:  none;
 }
-.questionInput, .answerInput{
+.questionInput, .answerInput, .multipleAnswerInput{
   border: none;
   line-height: 135%;
   width: 20%;
+  background: transparent;
 }
 .questionInput{
   font-size: 20px;
   margin-top: 40px;
 }
-.underline{
-  background-color: rgba(0,0,0,0.12);
-  height: 1px;
+.underline, .underlineAnswer{
   width: 20%;
   margin:auto;
+}
+.underline{
+  border-bottom: 1px solid rgba(0,0,0,0.38);
+}
+.underlineAnswer{
+ border-bottom: 1px dotted rgba(0,0,0,0.38);
 }
 .answerInput{
   margin-top:20px;
   font-size: 13px;
 }
+.multipleAnswer ~ .multipleAnswer{
+  margin: 10px 0 5px;
+}
+.multipleAnswer{
+  margin: 20px 0 5px;
+}
+.multipleAnswerInput{
+  display: inline-block;
+  width: 18%;
+  margin-left: 10px;
+  vertical-align: text-top;
+}
+.multipleChoiceCircle{
+  border-radius: 50%;
+  border: 2px solid #777;
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+}
 #addQuestion{
   font-size: 13px;
   text-decoration: none;
-  border: 1px solid rgba(0,0,0,0.12);
+  border: 1px solid #aaa;
   border-radius: 7px;
   padding: 2px 10px 5px;
-  box-shadow: 1px 1px 1px;
+  box-shadow: 3px 3px 3px;
   display: inline-block;
   margin-top: 30px;
+  color: #5a7045;
+  background: #fff;
+  font-weight: 600;
 }
 #addQuestion span{
   font-size: 17px;
+}
+#saveSurvey{
+  background-color: #3a472e;
+  color: #fff;
+  padding: 8px;
+  border: 1px solid #787878;
+  margin: 20px 0 40px;
 }
