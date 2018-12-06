@@ -9,7 +9,7 @@ class Question extends Component {
       <div>
         <input type="text" className="questionInput" placeholder="Question" name={this.props.name} onChange={this.props.onChange} />
         <div className="underline"></div>
-      </div>
+      </div> 
     );
   }
 }
@@ -42,29 +42,32 @@ class Survey extends Component {
       const printQuestionComponent = () => {
         return <p>Question no {i}: {this.state.value['question' + i]}</p>
       }
-      newArray.push(printQuestionComponent);
-      
-      let check = true;
-      const counter = 0;
-      while(check){
-        const letter = String.fromCharCode(65 + counter);
-        if(this.state.value['answer' + i + letter]){
-          var printAnswerComponent = () => {
-            //<input type="text" placeholder="Your answer" />
+      console.log(this.state.value['question'+i]);
 
-            return <p>Answer choice: {this.state.value['answer' + i + letter]}</p>
-          }
-          counter++;
-          newArray.push(printAnswerComponent);
+      if(this.state.value['question'+i] != null && this.state.value['question'+i] != ''){
+        
+        newArray.push(printQuestionComponent);
+
+        let check = true;
+        var counter = 0;
+        
+        while(check){
+          const letter = String.fromCharCode(65 + counter);
           
-        }else{
-          check = false;
+          if(this.state.value['answer' + i + letter]){
+            var printAnswerComponent = () => {
+              //<input type="text" placeholder="Your answer" />
+
+              return <p>Answer choice: {this.state.value['answer' + i + letter]}</p>
+            }
+            counter = counter + 1;
+            newArray.push(printAnswerComponent);
+          
+          }else{
+            check = false;
+          }
         }
       }
-      /*if(this.state.value['question'+i] != null){
-        newArray.push(printQuestionComponent);
-        newArray.push(printAnswerComponent);
-      }*/
     }
     
     this.setState({ printSurvey: newArray });
